@@ -1,0 +1,1541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>capsWatcher</class>
+ <widget class="QMainWindow" name="capsWatcher">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>621</width>
+    <height>606</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>621</width>
+    <height>606</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>621</width>
+    <height>606</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{
+	background-color:white;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="capsWatcher_logo">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>581</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;:/capsWatcher/capsWatcher_light.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QTabWidget" name="mainTab">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>581</width>
+      <height>446</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QTabWidget::tab-bar {
+    border: 1px solid white;
+    padding: 10px;
+}
+
+QTabBar::tab {
+    margin-left: 15px;
+    padding: 10px 14px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom: 2px solid rgb(221, 221, 221);
+    color: rgb(150, 150, 150);
+}
+
+QTabBar::tab:hover {
+    background: rgb(230, 230, 230);
+    color: rgb(50, 50, 50);
+}
+
+QTabBar::tab:selected {
+    background: rgb(215, 215, 215);
+    padding: 8px 14px;
+    border-bottom: 2px solid rgb(51, 51, 51);
+    color: black;
+}
+
+QTabWidget::pane {
+    border: 1px;
+}</string>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="overlayTab">
+     <attribute name="title">
+      <string>Overlay</string>
+     </attribute>
+     <widget class="QGroupBox" name="opacityBox">
+      <property name="geometry">
+       <rect>
+        <x>305</x>
+        <y>9</y>
+        <width>261</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Opacity</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget_4">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>20</y>
+         <width>241</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="opacityBoxLayout">
+        <property name="spacing">
+         <number>16</number>
+        </property>
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QSlider" name="opacityBoxSlider">
+          <property name="maximumSize">
+           <size>
+            <width>175</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="opacityBoxLabel">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>100%</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="displayTimeBox">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>9</y>
+        <width>261</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Display Time</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget_3">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>20</y>
+         <width>241</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="displayTimeBoxLayout">
+        <property name="spacing">
+         <number>16</number>
+        </property>
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QSlider" name="displayTimeBoxSlider">
+          <property name="maximumSize">
+           <size>
+            <width>175</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="displayTimeBoxLabel">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>0ms</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="colorSchemeBox">
+      <property name="geometry">
+       <rect>
+        <x>305</x>
+        <y>149</y>
+        <width>261</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Color scheme</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget_12">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>24</y>
+         <width>241</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="colorSchemeLayout">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QComboBox" name="colorSchemeComboBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <item>
+           <property name="text">
+            <string>Dark mode</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Light mode</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Use system color scheme</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="fadeEffectBox">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>79</y>
+        <width>261</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Fade-in/out Effect Time</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget_7">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>20</y>
+         <width>241</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="fadeEffectBoxLayout">
+        <property name="spacing">
+         <number>16</number>
+        </property>
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QSlider" name="fadeEffectBoxSlider">
+          <property name="maximumSize">
+           <size>
+            <width>175</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="fadeEffectBoxLabel">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel{
+	color: white;
+}</string>
+          </property>
+          <property name="text">
+           <string>0ms</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="positionScreenBox">
+      <property name="geometry">
+       <rect>
+        <x>305</x>
+        <y>79</y>
+        <width>261</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Position on Screen</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget_14">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>241</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="positionScreenLayout">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QComboBox" name="positionScreenComboBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <item>
+           <property name="text">
+            <string>Top left</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Top middle</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Top right</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Bottom left</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Bottom middle</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Bottom right</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="themeBox">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>149</y>
+        <width>261</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Theme</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>24</y>
+         <width>241</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QComboBox" name="themeComboBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <item>
+           <property name="text">
+            <string>Elegant (Default)</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="exitButton_2">
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>21</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="resources/res.qrc">
+            <normaloff>:/capsWatcher/info_dark.png</normaloff>:/capsWatcher/info_dark.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>13</width>
+            <height>13</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="previewBox">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>229</y>
+        <width>261</width>
+        <height>172</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Preview</string>
+      </property>
+      <widget class="QLabel" name="previewBoxBackgroundLabel">
+       <property name="geometry">
+        <rect>
+         <x>5</x>
+         <y>21</y>
+         <width>251</width>
+         <height>146</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-image: url(:/capsWatcher/previewLightMode.png);
+border-radius:5px;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="previewBoxIconLabel">
+       <property name="geometry">
+        <rect>
+         <x>74</x>
+         <y>39</y>
+         <width>109</width>
+         <height>109</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color:green;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="keysToWatchBox">
+      <property name="geometry">
+       <rect>
+        <x>305</x>
+        <y>230</y>
+        <width>261</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Keys to watch</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>4</x>
+         <y>21</y>
+         <width>259</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="keysToWatchLayout">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="numLockCheckBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Num Lock</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="capsLockCheckBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Caps Lock</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="scrollLockCheckBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Scroll Lock</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="watcherStatusBox">
+      <property name="geometry">
+       <rect>
+        <x>305</x>
+        <y>300</y>
+        <width>261</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Watcher status</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget_5">
+       <property name="geometry">
+        <rect>
+         <x>5</x>
+         <y>59</y>
+         <width>251</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="watcherStatusLayout">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="watcherStart">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Start</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normalon>:/capsWatcher/play_dark.png</normalon>
+            <disabledon>:/capsWatcher/play_light_disabled.png</disabledon>
+           </iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="watcherStop">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Stop</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normalon>:/capsWatcher/stop_dark.png</normalon>
+            <disabledon>:/capsWatcher/stop_light_disabled.png</disabledon>
+           </iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QLabel" name="watcherStatus">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>28</y>
+         <width>241</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    color:#961E1E;
+}</string>
+       </property>
+       <property name="text">
+        <string>Looking for capsWatcher process...</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="settingsTab">
+     <attribute name="title">
+      <string>Settings</string>
+     </attribute>
+     <widget class="QGroupBox" name="settingsBox">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>9</y>
+        <width>261</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Settings</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="layoutWidget_9">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>241</width>
+         <height>46</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="settingsBoxLayout">
+        <property name="spacing">
+         <number>3</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="settingsBoxAtStartupCheckBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Run at startup</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="settingsBoxTrayIconCheckBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Show icon on notification area</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="languageBox">
+      <property name="geometry">
+       <rect>
+        <x>305</x>
+        <y>9</y>
+        <width>261</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Language</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget_13">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>24</y>
+         <width>241</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="languageBoxLayout">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QComboBox" name="languageBoxComboBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <item>
+           <property name="text">
+            <string>en-US English (Default) </string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="updateResetBox">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>189</y>
+        <width>551</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Updates and Reset</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>19</y>
+         <width>531</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="updateResetLayout">
+        <property name="spacing">
+         <number>48</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="updateLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="updateButton">
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Check for updates</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources/res.qrc">
+              <normaloff>:/capsWatcher/update_dark.png</normaloff>:/capsWatcher/update_dark.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="neverUpdateCheckbox">
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Never search for updates</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="resetLayout" stretch="0,0">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="resetButton">
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>Reset settings to default</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources/res.qrc">
+              <normaloff>:/capsWatcher/restart_dark.png</normaloff>:/capsWatcher/restart_dark.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="resetLabel">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>15</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot;color:#7c7c00;&quot;&gt;WARNING: This action cannot be reverted&lt;/span&gt;&lt;/p&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="addThemeBox">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>89</y>
+        <width>551</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+	border: 1px solid rgb(210, 210, 210);
+	border-radius:5px;
+}
+QGroupBox::title {
+	padding-left: 6px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+}</string>
+      </property>
+      <property name="title">
+       <string>Add new theme</string>
+      </property>
+      <widget class="QWidget" name="layoutWidget_11">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>531</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="addThemeBoxLayout">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <item>
+         <widget class="QLineEdit" name="addThemeBoxLineEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>400</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLineEdit:disabled {
+    padding: 1px 18px 1px 3px;
+    color: #9B9B9B;
+    border-radius: 3px;
+    border: 1px solid #D0D0D0;
+    background-color: #F9F9F9;
+}</string>
+          </property>
+          <property name="text">
+           <string>Compressed file (*.zip)</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="addThemeBoxButton">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Select File (*.zip)</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resources/res.qrc">
+            <normaloff>:/capsWatcher/source_dark.png</normaloff>:/capsWatcher/source_dark.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QLabel" name="addThemeBoxHelperLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>18</y>
+         <width>531</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Segoe UI</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download new themes from the GitHub repository in the &lt;a href=&quot;\&amp;quot;https://github.com/nxtsoul/capsWatcher/\&amp;quot;&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#55aaff;&quot;&gt;contributed-themes&lt;/span&gt;&lt;/a&gt; folder, and remember, do not extract the file; select the (*.zip) file for the app to unzip and install.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="openExternalLinks">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>15</x>
+        <y>279</y>
+        <width>551</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="aboutLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="about">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;About&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="aboutText">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>The capsWatcher was created with the idea of allowing the community's free customization, given that the on-screen overlay is based on images. It was also designed to assist people using 60% or TKL keyboards who lack or do not have good indications of the state of toggle keys. The capsWatcher was developed using Python as its main language and the PyQt framework for displaying the interface and overlay. Thank you and enjoy using it.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="aboutCopyright">
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;v.1.0.1 | Copyright © 2023 Natã Andreghetone — All Rights Reserved   &lt;/span&gt;&lt;img src=&quot;:/capsWatcher/brazil.png&quot; width=&quot;20&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>564</y>
+      <width>581</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="leftMargin">
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="versionLabel">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>There are pending changes to be applied</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="mainGroupButtons">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="exitButton">
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>Quit</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/res.qrc">
+           <normaloff>:/capsWatcher/exit_dark.png</normaloff>:/capsWatcher/exit_dark.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="applyButton">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>Apply changes</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/res.qrc">
+           <normaloff>:/capsWatcher/apply_dark.png</normaloff>:/capsWatcher/apply_dark.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>mainTab</tabstop>
+  <tabstop>displayTimeBoxSlider</tabstop>
+  <tabstop>opacityBoxSlider</tabstop>
+  <tabstop>fadeEffectBoxSlider</tabstop>
+  <tabstop>positionScreenComboBox</tabstop>
+  <tabstop>themeComboBox</tabstop>
+  <tabstop>exitButton_2</tabstop>
+  <tabstop>colorSchemeComboBox</tabstop>
+  <tabstop>languageBoxComboBox</tabstop>
+  <tabstop>updateButton</tabstop>
+  <tabstop>neverUpdateCheckbox</tabstop>
+  <tabstop>resetButton</tabstop>
+  <tabstop>addThemeBoxLineEdit</tabstop>
+  <tabstop>addThemeBoxButton</tabstop>
+  <tabstop>exitButton</tabstop>
+  <tabstop>applyButton</tabstop>
+  <tabstop>settingsBoxTrayIconCheckBox</tabstop>
+  <tabstop>settingsBoxAtStartupCheckBox</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resources/res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

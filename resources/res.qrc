@@ -1,0 +1,31 @@
+<RCC>
+  <qresource prefix="capsWatcher">
+    <file>appicon.png</file>
+    <file>apply_dark.png</file>
+    <file>apply_light.png</file>
+    <file>apply_light_disabled.png</file>
+    <file>brazil.png</file>
+    <file>capsWatcher_dark.png</file>
+    <file>capsWatcher_light.png</file>
+    <file>exit_dark.png</file>
+    <file>exit_light.png</file>
+    <file>grey-down-arrow.png</file>
+    <file>info_dark.png</file>
+    <file>info_light.png</file>
+    <file>play_dark.png</file>
+    <file>play_light.png</file>
+    <file>play_light_disabled.png</file>
+    <file>previewDarkMode.png</file>
+    <file>previewLightMode.png</file>
+    <file>restart_dark.png</file>
+    <file>restart_light.png</file>
+    <file>source_dark.png</file>
+    <file>source_light.png</file>
+    <file>stop_dark.png</file>
+    <file>stop_light.png</file>
+    <file>stop_light_disabled.png</file>
+    <file>update_dark.png</file>
+    <file>update_light.png</file>
+    <file>white-down-arrow.png</file>
+  </qresource>
+</RCC>
