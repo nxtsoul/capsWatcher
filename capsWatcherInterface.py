@@ -6,7 +6,7 @@ from winreg import OpenKey, SetValueEx, QueryValueEx, DeleteValue, REG_SZ, KEY_A
 from datetime import datetime
 import capsWatcherResources, sys, os, subprocess, configparser, json, psutil, time, pywinstyles, pathlib, zipfile
 
-appVersion = "v1.0.1"
+appVersion = [1, 0, 1, 9]
 
 class capsWatcher_configInterface(QMainWindow):
     def __init__(self):
@@ -22,6 +22,7 @@ class capsWatcher_configInterface(QMainWindow):
         self.messageBox = QMessageBox()
 
         self.currentScheme = None
+        self.currentDirectory = None
         self.darkModeSupport = None
         self.lightModeSupport = None
         self.fileModified = None
@@ -29,6 +30,7 @@ class capsWatcher_configInterface(QMainWindow):
         self.capsLockSupport = ['Caps Lock', None]
         self.scrollLockSupport = ['Scroll Lock', None]
 
+        self.parseCurrentDirectory()
         self.parseConfig()
         self.parseThemes()
         self.configureInterface()
@@ -140,25 +142,23 @@ class capsWatcher_configInterface(QMainWindow):
             except ValueError : pass
     
     def parseKeyToWatch(self):
-        disableRequirementString = self.appLang["DISABLE_KEY_REQUIREMENT"]
-        disablenonSupportString = self.appLang["DISABLE_KEY_NON_SUPPORT"]
         checkBoxList = [self.ui.numLockCheckBox, self.ui.capsLockCheckBox, self.ui.scrollLockCheckBox]
         keyThemeNonSupport = [key for key in [self.numLockSupport, self.capsLockSupport, self.scrollLockSupport] if key[1] == False]
         if len(keyThemeNonSupport) > 0:
             for x in keyThemeNonSupport:
                 for j in checkBoxList:
                     if x[0] == j.text():
-                        self.treatCheckBox(j, disabled=True, tooltip=disablenonSupportString)
+                        self.treatCheckBox(j, disabled=True, tooltip=self.appLang["DISABLE_KEY_NON_SUPPORT"])
                         checkBoxList.remove(j)
         else : [self.treatCheckBox(key, disabled=False) for key in checkBoxList] 
         enabledCheckBox = [checkbox for checkbox in checkBoxList if checkbox.isChecked()]
         if len(enabledCheckBox) == 0 and len(keyThemeNonSupport) == 3:
-            [self.treatCheckBox(key, disabled=True, tooltip=disablenonSupportString) for key in enabledCheckBox]
+            [self.treatCheckBox(key, disabled=True, tooltip=self.appLang["DISABLE_KEY_NON_SUPPORT"]) for key in enabledCheckBox]
         elif len(enabledCheckBox) == 0 and len(keyThemeNonSupport) < 3:
             checkBoxList[0].setChecked(True)
-            self.treatCheckBox(checkBoxList[0], disabled=True, tooltip=disableRequirementString)
+            self.treatCheckBox(checkBoxList[0], disabled=True, tooltip=self.appLang["DISABLE_KEY_REQUIREMENT"])
         elif len(enabledCheckBox) == 1:
-            self.treatCheckBox(enabledCheckBox[0], disabled=True, tooltip=disableRequirementString)
+            self.treatCheckBox(enabledCheckBox[0], disabled=True, tooltip=self.appLang["DISABLE_KEY_REQUIREMENT"])
         elif len(enabledCheckBox) > 1:
             [self.treatCheckBox(key, disabled=False) for key in enabledCheckBox]
 
@@ -227,11 +227,15 @@ class capsWatcher_configInterface(QMainWindow):
         self.ui.addThemeBoxHelperLabel.setText(self.appLang["ADD_THEME_HELPER_TEXT"])
         self.ui.about.setText(f'<span style=\"font-size:12pt;font-weight:600;\">{self.appLang["ABOUT"]}</span>')
         self.ui.aboutText.setText(self.appLang["ABOUT_TEXT"])
-        self.ui.aboutCopyright.setText(f'<p align=\"right\"><span style=\" font-weight:600;\">{appVersion} | {self.appLang["COPYRIGHT"]}&nbsp;&nbsp;&nbsp;</span><img width=\"20\" src=\":/capsWatcher/brazil.png\"/>')
+        self.ui.aboutCopyright.setText(f'<p align=\"right\"><span style=\" font-weight:600;\">v{".".join(map(str, appVersion))} | {self.appLang["COPYRIGHT"]}&nbsp;&nbsp;&nbsp;</span><img width=\"20\" src=\":/capsWatcher/brazil.png\"/>')
         self.ui.mainTab.setTabText(self.ui.mainTab.indexOf(self.ui.settingsTab), self.appLang["SETTINGS"])
         self.ui.exitButton.setText(self.appLang["QUIT"])
         self.ui.applyButton.setText(self.appLang["APPLY_CHANGES"])
     
+    def parseCurrentDirectory(self):
+        if getattr(sys, 'frozen', False) : self.currentDirectory = os.path.dirname(sys.executable)
+        else : self.currentDirectory = os.path.dirname(os.path.abspath(__file__))
+
     def configureInterface(self):
         self.treatColorScheme(self.overlayColorScheme)
 
@@ -416,7 +420,7 @@ class capsWatcher_configInterface(QMainWindow):
         self.ui.watcherStart.setIcon(self.ui.startIconDisabled)
         self.ui.watcherStatus.setStyleSheet(self.ui.yellowLabel)
         self.ui.watcherStatus.setText(self.appLang["STARTING_CAPSWATCHER"])
-        subprocess.Popen('capsWatcher.exe', shell=True)
+        subprocess.Popen(os.path.join(self.currentDirectory, 'capsWatcher.exe'), shell=True)
         self.processWatcherThread.start()
     
     def handleStopProcess(self, event=None):
@@ -593,7 +597,7 @@ class capsWatcher_configInterface(QMainWindow):
     def getSystemScheme(self):
         try: return 0 if QueryValueEx(OpenKey(HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'), 'AppsUseLightTheme')[0] == 0 else 1
         except Exception as e : return f"Error: {e}"
-    
+
     def modifyConfig(self, section, key, value):
         self.configParser.set(section, key, value)
         f = open(self.cfgFilePath, 'w')
@@ -632,15 +636,15 @@ class capsWatcher_processWatcher(QThread):
         processInfo = ['capsWatcher.exe', None]
         time.sleep(1)
         while not foundProcess:
+            time.sleep(1)
             for process in psutil.process_iter(['name']):
                 self.msleep(1)
                 if process.info['name'] == processInfo[0]:
                     foundProcess = True
                     processInfo[1] = process.pid
                     break
-
             if not foundProcess : self.processData.emit(False, "")
-        
+
         while True:
             try:
                 process = psutil.Process(processInfo[1])
@@ -651,8 +655,8 @@ class capsWatcher_processWatcher(QThread):
                 self.processData.emit(False, "")
                 break
 
-            self.msleep(1)
-            
+            self.msleep(1)     
+
 class capsWatcher_monitorConfigFile(QThread):
     needReload = pyqtSignal(bool)
     def run(self):
