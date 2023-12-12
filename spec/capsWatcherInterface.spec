@@ -20,7 +20,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='capsWatcher',
+    name='capsWatcherInterface',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
