@@ -5,6 +5,7 @@ from winreg import OpenKey, QueryValueEx, HKEY_CURRENT_USER
 from configparser import ConfigParser
 from win32api import GetKeyState
 from datetime import datetime
+from os.path import join as pathj
 import capsWatcherResources, sys, os, json
 
 class capsWatcher_customQMenu(QMenu):
@@ -74,15 +75,14 @@ class capsWatcher_customQMenu(QMenu):
         path.addRoundedRect(rect, self.radius, self.radius)
         region = QRegion(path.toFillPolygon(QTransform()).toPolygon())
         self.setMask(region)
-
 class capsWatcher_Overlay(QWidget):
     def __init__(self):
         super().__init__()
-        self.cfgPath = os.path.join(os.getenv('APPDATA'), 'capsWatcher')
-        self.cfgFilePath = os.path.join(self.cfgPath, 'capsWatcher.cfg')
-        self.themesPath = os.path.join(self.cfgPath, 'themes')
-        self.reloadFile = os.path.join(self.cfgPath, 'reload.d')
-        self.terminateFile = os.path.join(self.cfgPath, 'terminate.d')
+        self.cfgPath = pathj(os.getenv('APPDATA'), 'capsWatcher')
+        self.cfgFilePath = pathj(self.cfgPath, 'capsWatcher.cfg')
+        self.themesPath = pathj(self.cfgPath, 'themes')
+        self.reloadFile = pathj(self.cfgPath, 'reload.d')
+        self.terminateFile = pathj(self.cfgPath, 'terminate.d')
 
         self.parseConfig()
         self.parseTray()
@@ -164,7 +164,7 @@ class capsWatcher_Overlay(QWidget):
     def parseConfig(self):
         self.configParser = ConfigParser()
         if not os.path.exists(self.cfgFilePath):
-            # o arquivo de config nao foi encontrado blable abra a interface e blabla
+            self.showMessageBox("capsWatcher launch error", "Configuration file not found, please open capsWatcher configuration interface to manage.", "critical")
             sys.exit(1)
         self.configParser.read(self.cfgFilePath)
 
@@ -173,12 +173,12 @@ class capsWatcher_Overlay(QWidget):
         self.overlayFadeEffectTime = int(self.configParser.get('overlay', 'fadeEffectTime'))
         self.overlayPositionOnScreen = int(self.configParser.get('overlay', 'positionOnScreen'))
         self.overlayTheme = self.configParser.get('overlay', 'theme')
-        self.currentThemeFile = os.path.join(os.path.join(self.themesPath, self.overlayTheme), f"{self.overlayTheme}.json")
+        self.currentThemeFile = pathj(pathj(self.themesPath, self.overlayTheme), f"{self.overlayTheme}.json")
         self.currentThemeExists = os.path.exists(self.currentThemeFile)
         self.overlayColorScheme = int(self.configParser.get('overlay', 'colorScheme'))
         self.overlayKeysToWatch = list(map(int, self.configParser.get('overlay', 'keysToWatch').split(',')))
         self.settingsTrayIcon = bool(int(self.configParser.get('settings', 'trayicon')))
-        self.themeFolder = os.path.join(self.themesPath, self.overlayTheme)
+        self.themeFolder = pathj(self.themesPath, self.overlayTheme)
 
         if not 500 <= self.overlayDisplayTime <= 2000 : self.appException("Unable to load configuration file.", "Display Time not in allowed range (500, 2000).", configRelated=True)
         if not 0.10 <= self.overlayOpacity <= 1.00 : self.appException("Unable to load configuration file.", "Opacity value not in allowed range (10, 100).", configRelated=True)
@@ -210,7 +210,7 @@ class capsWatcher_Overlay(QWidget):
             self.appException("Unable to set current selected theme.", f'The selected theme "{self.overlayTheme.capitalize()}", cannot be loaded, check integrity or reinstall.')
 
     def parseTray(self):
-        self.tray = QSystemTrayIcon(QIcon("appicon.png"))
+        self.tray = QSystemTrayIcon(QIcon(":/capsWatcher/appicon.png"))
         self.trayMenu = capsWatcher_customQMenu()
         self.tray.setToolTip("CapsWatcher")
         self.tray.activated.connect(self.handleMainTrayClick)
@@ -303,16 +303,16 @@ class capsWatcher_Overlay(QWidget):
         self.fadeEffect.start()
     
     def treatThemeScheme(self, data, scheme):
-        overlayPath = os.path.join(self.themeFolder, data[scheme]['overlayPath'])
+        overlayPath = pathj(self.themeFolder, data[scheme]['overlayPath'])
         if data[scheme]['numLockSupport']:
-            self.numLockEnabledOverlay = os.path.join(overlayPath, '1441.png')
-            self.numLockDisabledOverlay = os.path.join(overlayPath, '1440.png')
+            self.numLockEnabledOverlay = pathj(overlayPath, '1441.png')
+            self.numLockDisabledOverlay = pathj(overlayPath, '1440.png')
         if data[scheme]['capsLockSupport']:
-            self.capsLockEnabledOverlay = os.path.join(overlayPath, '201.png')
-            self.capsLockDisabledOverlay = os.path.join(overlayPath, '200.png')
+            self.capsLockEnabledOverlay = pathj(overlayPath, '201.png')
+            self.capsLockDisabledOverlay = pathj(overlayPath, '200.png')
         if data[scheme]['scrollLockSupport']:
-            self.scrollLockEnabledOverlay = os.path.join(overlayPath, '1451.png')
-            self.scrollLockDisabledOverlay = os.path.join(overlayPath, '1450.png')
+            self.scrollLockEnabledOverlay = pathj(overlayPath, '1451.png')
+            self.scrollLockDisabledOverlay = pathj(overlayPath, '1450.png')
 
     def showMessageBox(self, title, message, icon):
         msg_box = QMessageBox()
@@ -329,7 +329,6 @@ class capsWatcher_Overlay(QWidget):
         self.showMessageBox("capsWatcher", error+'\n'+'ㅤ'*30+'\n'+message, 'critical')
         if configRelated == True : os.unlink(self.cfgFilePath)
         sys.exit(1)
-
 class capsWatcher_KeyState(QThread):
     stateChanged = pyqtSignal(int, bool)
 
