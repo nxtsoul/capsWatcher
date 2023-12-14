@@ -6,7 +6,7 @@ from configparser import ConfigParser
 from win32api import GetKeyState
 from datetime import datetime
 from os.path import join as pathj
-import capsWatcherResources, sys, os, json
+import capsWatcherResources, sys, os, json, subprocess
 
 class capsWatcher_customQMenu(QMenu):
     def __init__(self):
@@ -241,7 +241,7 @@ class capsWatcher_Overlay(QWidget):
         else : self.currentDirectory = os.path.dirname(os.path.abspath(__file__))
 
     def handleConfigTrayClick(self):
-        print("chamar a interface aqui")
+        subprocess.Popen(os.path.join(self.currentDirectory, 'capsWatcherInterface.exe'), shell=True)
     
     def handleMainTrayClick(self):
         if self.lastTrayClickTime is not None:
