@@ -6,7 +6,7 @@ from configparser import ConfigParser
 from win32api import GetKeyState
 from datetime import datetime
 from os.path import join as pathj
-import capsWatcherResources, sys, os, json, subprocess
+import capsWatcherResources, sys, os, json, subprocess, psutil
 
 class capsWatcher_customQMenu(QMenu):
     def __init__(self):
@@ -78,6 +78,9 @@ class capsWatcher_customQMenu(QMenu):
 class capsWatcher_Overlay(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.checkForExistingProcess()
+
         self.cfgPath = pathj(os.getenv('APPDATA'), 'capsWatcher')
         self.cfgFilePath = pathj(self.cfgPath, 'capsWatcher.cfg')
         self.themesPath = pathj(self.cfgPath, 'themes')
@@ -98,6 +101,15 @@ class capsWatcher_Overlay(QWidget):
         self.checkReloadTimer.timeout.connect(self.checkReloadFile)
         self.checkReloadTimer.start(1000)
     
+    def checkForExistingProcess(self):
+        processRunning = 0
+        for process in psutil.process_iter(['name']):
+            if 'capsWatcher.exe' in process.info['name']:
+                if processRunning > 1:
+                    self.showMessageBox("capsWatcher launch error", "Only one instance of capsWatcher is allowed, try closing the existing one with capsWatcher Interface if you need it.", "critical")
+                    self.overlayQuit()
+                processRunning += 1
+
     def checkReloadFile(self):
         if os.path.exists(self.reloadFile):
             self.reloadElements()

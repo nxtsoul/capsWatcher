@@ -11,6 +11,11 @@ appVersion = [1, 0, 1, 9]
 class capsWatcher_configInterface(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.messageBox = QMessageBox()
+        
+        self.checkForExistingProcess()
+
         self.ui = capsWatcher_uiElements()
         self.ui.setupUi(self)
 
@@ -18,8 +23,6 @@ class capsWatcher_configInterface(QMainWindow):
         self.cfgFilePath = os.path.join(self.cfgPath, 'capsWatcher.cfg')
         self.themesPath = os.path.join(self.cfgPath, 'themes')
         self.languagesPath = os.path.join(self.cfgPath, 'languages')
-
-        self.messageBox = QMessageBox()
 
         self.currentScheme = None
         self.currentDirectory = None
@@ -627,6 +630,15 @@ class capsWatcher_configInterface(QMainWindow):
         self.showMessageBox("capsWatcher", error+'\n'+'ㅤ'*30+'\n'+message, 'critical')
         if configRelated == True : os.unlink(self.cfgFilePath)
         sys.exit(1)
+    
+    def checkForExistingProcess(self):
+        processRunning = 0
+        for process in psutil.process_iter(['name']):
+            if 'capsWatcherInterface.exe' in process.info['name']:
+                if processRunning > 1:
+                    self.showMessageBox("capsWatcher launch error", "Only one instance of capsWatcherInterface is allowed.", "critical")
+                    self.handleQuit()
+                processRunning += 1
 
 class capsWatcher_processWatcher(QThread):
     processData = pyqtSignal(bool, str)
