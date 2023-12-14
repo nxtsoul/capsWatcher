@@ -83,7 +83,9 @@ class capsWatcher_Overlay(QWidget):
         self.themesPath = pathj(self.cfgPath, 'themes')
         self.reloadFile = pathj(self.cfgPath, 'reload.d')
         self.terminateFile = pathj(self.cfgPath, 'terminate.d')
+        self.currentDirectory = None
 
+        self.parseCurrentDirectory()
         self.parseConfig()
         self.parseTray()
         self.parseElements()
@@ -234,6 +236,10 @@ class capsWatcher_Overlay(QWidget):
         self.quitAction.triggered.connect(self.overlayQuit)
         self.configAction.triggered.connect(self.handleConfigTrayClick)
 
+    def parseCurrentDirectory(self):
+        if getattr(sys, 'frozen', False) : self.currentDirectory = os.path.dirname(sys.executable)
+        else : self.currentDirectory = os.path.dirname(os.path.abspath(__file__))
+
     def handleConfigTrayClick(self):
         print("chamar a interface aqui")
     
@@ -241,7 +247,7 @@ class capsWatcher_Overlay(QWidget):
         if self.lastTrayClickTime is not None:
             currentTrayClickTime = datetime.now()
             timeDiff = (currentTrayClickTime - self.lastTrayClickTime).total_seconds() * 1000
-            if timeDiff < 500 : self.openConfigurationInterface()
+            if timeDiff < 500 : self.handleConfigTrayClick()
             self.lastTrayClickTime = currentTrayClickTime
         else : self.lastTrayClickTime = datetime.now()
             
