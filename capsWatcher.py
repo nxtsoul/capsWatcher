@@ -102,7 +102,7 @@ class capsWatcher_Overlay(QWidget):
         self.checkReloadTimer.start(1000)
     
     def checkForExistingProcess(self):
-        processRunning = 0
+        processRunning = 1
         for process in psutil.process_iter(['name']):
             if 'capsWatcher.exe' in process.info['name']:
                 if processRunning > 1:

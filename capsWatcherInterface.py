@@ -632,7 +632,7 @@ class capsWatcher_configInterface(QMainWindow):
         sys.exit(1)
     
     def checkForExistingProcess(self):
-        processRunning = 0
+        processRunning = 1
         for process in psutil.process_iter(['name']):
             if 'capsWatcherInterface.exe' in process.info['name']:
                 if processRunning > 1:
