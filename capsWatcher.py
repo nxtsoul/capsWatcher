@@ -8,6 +8,8 @@ from datetime import datetime
 from os.path import join as pathj
 import capsWatcherResources, sys, os, json, subprocess, psutil
 
+appVersion = [1, 0, 1, 9]
+
 class capsWatcher_customQMenu(QMenu):
     def __init__(self):
 
@@ -230,7 +232,7 @@ class capsWatcher_Overlay(QWidget):
         self.tray.activated.connect(self.handleMainTrayClick)
         self.lastTrayClickTime = None
 
-        self.capsWatcherTrayName = QAction("capsWatcher")
+        self.capsWatcherTrayName = QAction(f"capsWatcher {".".join(map(str, appVersion))}")
         self.capsWatcherTrayName.setDisabled(True)
         self.configAction = QAction("Configuration")
         self.reloadAction = QAction("Reload watcher")
