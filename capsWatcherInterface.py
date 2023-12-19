@@ -19,11 +19,6 @@ class capsWatcher_configInterface(QMainWindow):
         self.ui = capsWatcher_uiElements()
         self.ui.setupUi(self)
 
-        self.cfgPath = os.path.join(os.getenv('APPDATA'), 'capsWatcher')
-        self.cfgFilePath = os.path.join(self.cfgPath, 'capsWatcher.cfg')
-        self.themesPath = os.path.join(self.cfgPath, 'themes')
-        self.languagesPath = os.path.join(self.cfgPath, 'languages')
-
         self.currentScheme = None
         self.currentDirectory = None
         self.darkModeSupport = None
@@ -34,7 +29,7 @@ class capsWatcher_configInterface(QMainWindow):
         self.capsLockSupport = ['Caps Lock', None]
         self.scrollLockSupport = ['Scroll Lock', None]
 
-        self.parseCurrentDirectory()
+        self.parsePaths()
         self.parseConfig()
         self.parseThemes()
         self.configureInterface()
@@ -46,12 +41,20 @@ class capsWatcher_configInterface(QMainWindow):
         self.monitorConfigFile = capsWatcher_monitorConfigFile()
         self.monitorConfigFile.needReload.connect(self.handleFileModified)
         self.monitorConfigFile.start()
+
+    def parsePaths(self):
+        if getattr(sys, 'frozen', False) : self.currentDirectory = os.path.dirname(sys.executable)
+        else : self.currentDirectory = os.path.dirname(os.path.abspath(__file__))
+        self.configPath = os.path.join(os.getenv('APPDATA'), 'capsWatcher')
+        self.configFilePath = os.path.join(self.configPath, 'capsWatcher.cfg')
+        self.themesPath = os.path.join(self.configPath, 'themes')
+        self.languagesPath = os.path.join(self.configPath, 'languages')
     
     def parseConfig(self):
         self.configParser = configparser.ConfigParser()
 
-        if not os.path.exists(self.cfgPath): os.mkdir(self.cfgPath)
-        if not os.path.exists(self.cfgFilePath):
+        if not os.path.exists(self.configPath): os.mkdir(self.configPath)
+        if not os.path.exists(self.configFilePath):
             self.configParser.add_section('overlay')
             self.configParser.set('overlay', 'displayTime', '1500')
             self.configParser.set('overlay', 'opacity', '95')
@@ -65,12 +68,12 @@ class capsWatcher_configInterface(QMainWindow):
             self.configParser.set('settings', 'trayIcon', '1')
             self.configParser.set('settings', 'language', 'en-US')
             self.configParser.set('settings', 'checkForUpdates', '1')
-            with open(self.cfgFilePath, 'w') as f:
+            with open(self.configFilePath, 'w') as f:
                 self.configParser.write(f)
                 f.close()
             self.handleRunAtStart(2)
 
-        self.configParser.read(self.cfgFilePath)
+        self.configParser.read(self.configFilePath)
 
         self.overlayDisplayTime = int(self.configParser.get('overlay', 'displayTime'))
         self.overlayOpacity = int(self.configParser.get('overlay', 'opacity'))
@@ -236,10 +239,6 @@ class capsWatcher_configInterface(QMainWindow):
         self.ui.mainTab.setTabText(self.ui.mainTab.indexOf(self.ui.settingsTab), self.appLang["SETTINGS"])
         self.ui.exitButton.setText(self.appLang["QUIT"])
         self.ui.applyButton.setText(self.appLang["APPLY_CHANGES"])
-    
-    def parseCurrentDirectory(self):
-        if getattr(sys, 'frozen', False) : self.currentDirectory = os.path.dirname(sys.executable)
-        else : self.currentDirectory = os.path.dirname(os.path.abspath(__file__))
 
     def configureInterface(self):
         self.treatColorScheme(self.overlayColorScheme)
@@ -434,19 +433,19 @@ class capsWatcher_configInterface(QMainWindow):
         self.processWatcherThread.terminate()
         self.ui.watcherStatus.setStyleSheet(self.ui.yellowLabel)
         self.ui.watcherStatus.setText(self.appLang["STOPPING_CAPSWATCHER"])
-        open(os.path.join(self.cfgPath, 'terminate.d'), 'w').close()
+        open(os.path.join(self.configPath, 'terminate.d'), 'w').close()
         self.processWatcherThread.start()
 
     def handleReset(self, event=None):
         if self.showMessageBox(self.appLang["RESET_SETTINGS"], self.appLang["RESET_TEXT"]+"<br />"+self.appLang["RESET_WARNING"], "question") != QMessageBox.Yes: return
         self.monitorConfigFile.terminate()
-        os.unlink(self.cfgFilePath)
+        os.unlink(self.configFilePath)
         self.inResetState = True
         self.parseConfig()
         self.treatColorScheme(self.overlayColorScheme)
         self.parseKeyToWatch()
         self.handlePreviewIconOpacity()
-        open(os.path.join(self.cfgPath, 'reload.d'), 'w').close()
+        open(os.path.join(self.configPath, 'reload.d'), 'w').close()
         self.monitorConfigFile.start()
         self.inResetState = False
     
@@ -477,7 +476,7 @@ class capsWatcher_configInterface(QMainWindow):
             self.fileModified = False
             self.ui.applyButton.setEnabled(False)
             self.ui.applyButton.setIcon(self.ui.applyIconDisabled)
-            open(os.path.join(self.cfgPath, 'reload.d'), 'w').close()
+            open(os.path.join(self.configPath, 'reload.d'), 'w').close()
             self.ui.infoLabel.setText("")
             self.monitorConfigFile.start()
 
@@ -608,7 +607,7 @@ class capsWatcher_configInterface(QMainWindow):
 
     def modifyConfig(self, section, key, value):
         self.configParser.set(section, key, value)
-        f = open(self.cfgFilePath, 'w')
+        f = open(self.configFilePath, 'w')
         self.configParser.write(f)
         f.close()
 
@@ -633,7 +632,7 @@ class capsWatcher_configInterface(QMainWindow):
     
     def appException(self, error, message, configRelated=False):
         self.showMessageBox("capsWatcher", error+'\n'+'ㅤ'*30+'\n'+message, 'critical')
-        if configRelated == True : os.unlink(self.cfgFilePath)
+        if configRelated == True : os.unlink(self.configFilePath)
         sys.exit(1)
     
     def checkForExistingProcess(self):
@@ -677,10 +676,10 @@ class capsWatcher_processWatcher(QThread):
 class capsWatcher_monitorConfigFile(QThread):
     needReload = pyqtSignal(bool)
     def run(self):
-        self.cfgFilePath = os.path.join(os.path.join(os.getenv('APPDATA'), 'capsWatcher'), 'capsWatcher.cfg')
-        self.cachedStamp = os.stat(self.cfgFilePath).st_mtime
+        self.configFilePath = os.path.join(os.path.join(os.getenv('APPDATA'), 'capsWatcher'), 'capsWatcher.cfg')
+        self.cachedStamp = os.stat(self.configFilePath).st_mtime
         while True:
-            currentStamp = os.stat(self.cfgFilePath).st_mtime
+            currentStamp = os.stat(self.configFilePath).st_mtime
             if currentStamp != self.cachedStamp:
                 self.cachedStamp = currentStamp
                 self.needReload.emit(True)
