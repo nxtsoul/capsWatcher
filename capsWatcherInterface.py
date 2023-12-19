@@ -29,6 +29,7 @@ class capsWatcher_configInterface(QMainWindow):
         self.darkModeSupport = None
         self.lightModeSupport = None
         self.fileModified = None
+        self.inResetState = False
         self.numLockSupport = ['Num Lock', None]
         self.capsLockSupport = ['Caps Lock', None]
         self.scrollLockSupport = ['Scroll Lock', None]
@@ -96,8 +97,9 @@ class capsWatcher_configInterface(QMainWindow):
         if any(item not in [20,144,145] for item in self.overlayKeysToWatch) : self.appException("Unable to load configuration file.", f"Invalid key {[x for x in self.overlayKeysToWatch]} to define to capsWatcher, supported keys is (20, 144, 145)", configRelated=True)
         if not self.settingsLanguage or not self.currentLanguageExists : self.appException("Unable to load configuration file.", f"The language file '{self.settingsLanguage}.json' is not found or is corrupted.", configRelated=True)
 
-        self.parseLanguages()
-        self.parseTranslation()
+        if not self.inResetState:
+            self.parseLanguages()
+            self.parseTranslation()
 
         self.ui.displayTimeBoxSlider.setValue(self.overlayDisplayTime)
         self.ui.displayTimeBoxLabel.setText(f"{self.overlayDisplayTime}ms")
@@ -439,12 +441,14 @@ class capsWatcher_configInterface(QMainWindow):
         if self.showMessageBox(self.appLang["RESET_SETTINGS"], self.appLang["RESET_TEXT"]+"<br />"+self.appLang["RESET_WARNING"], "question") != QMessageBox.Yes: return
         self.monitorConfigFile.terminate()
         os.unlink(self.cfgFilePath)
+        self.inResetState = True
         self.parseConfig()
         self.treatColorScheme(self.overlayColorScheme)
         self.parseKeyToWatch()
         self.handlePreviewIconOpacity()
         open(os.path.join(self.cfgPath, 'reload.d'), 'w').close()
         self.monitorConfigFile.start()
+        self.inResetState = False
     
     def handleApply(self, event=None):
         self.handleFileModified(modified=False)
@@ -492,7 +496,8 @@ class capsWatcher_configInterface(QMainWindow):
         self.modifyConfig('overlay', 'keysToWatch', ",".join(map(str, self.overlayKeysToWatch)))
 
     def handleLanguage(self):
-        currentData = self.ui.languageBoxComboBox.currentData()
+        currentData = self.ui.languageBoxComboBox.itemData(self.ui.languageBoxComboBox.currentIndex())
+        print(self.ui.languageBoxComboBox.count())
         if self.settingsLanguage != currentData:
             self.settingsLanguage = currentData
             self.currentLanguageFile = os.path.join(self.languagesPath, f"{currentData}.json")
