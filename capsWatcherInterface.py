@@ -47,8 +47,8 @@ class capsWatcher_configInterface(QMainWindow):
         else : self.currentDirectory = os.path.dirname(os.path.abspath(__file__))
         self.configPath = os.path.join(os.getenv('APPDATA'), 'capsWatcher')
         self.configFilePath = os.path.join(self.configPath, 'capsWatcher.cfg')
-        self.themesPath = os.path.join(self.configPath, 'themes')
-        self.languagesPath = os.path.join(self.configPath, 'languages')
+        self.themesPath = os.path.join(self.currentDirectory, 'themes')
+        self.languagesPath = os.path.join(self.currentDirectory, 'languages')
     
     def parseConfig(self):
         self.configParser = configparser.ConfigParser()
