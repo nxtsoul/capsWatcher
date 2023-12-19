@@ -75,6 +75,9 @@ class capsWatcher_configInterface(QMainWindow):
 
         self.configParser.read(self.configFilePath)
 
+        if self.handleRunAtStart(getKeyStatus=True) == '1' : self.modifyConfig('settings', 'runAtStartup', '1')
+        else : self.modifyConfig('settings', 'runAtStartup', '0')
+
         self.overlayDisplayTime = int(self.configParser.get('overlay', 'displayTime'))
         self.overlayOpacity = int(self.configParser.get('overlay', 'opacity'))
         self.overlayFadeEffectTime = int(self.configParser.get('overlay', 'fadeEffectTime'))
@@ -546,7 +549,7 @@ class capsWatcher_configInterface(QMainWindow):
             if self.fileModified : self.ui.applyButton.setIcon(self.ui.lightApplyIcon)
             self.parsePreviewImage()
 
-    def handleRunAtStart(self, state):
+    def handleRunAtStart(self, state=2, getKeyStatus=False):
         regKey = OpenKey(HKEY_CURRENT_USER, r"Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_ALL_ACCESS)
         regKeyName = "capsWatcher"
         config = str(int(False))
@@ -555,6 +558,7 @@ class capsWatcher_configInterface(QMainWindow):
             regKeyExists = True
         except:
             regKeyExists = False
+        if getKeyStatus : return str(int(regKeyExists))
         if state == 2:
             if not regKeyExists:
                 SetValueEx(regKey, regKeyName, 0, REG_SZ, 'C:\\Program Files (x86)\\capsWatcher\\capsWatcher.exe')
