@@ -242,6 +242,7 @@ class capsWatcher_configInterface(QMainWindow):
         self.ui.mainTab.setTabText(self.ui.mainTab.indexOf(self.ui.settingsTab), self.appLang["SETTINGS"])
         self.ui.exitButton.setText(self.appLang["QUIT"])
         self.ui.applyButton.setText(self.appLang["APPLY_CHANGES"])
+        if self.fileModified : self.ui.infoLabel.setText(self.appLang["PENDING_CHANGES_TO_APPLY"])
 
     def configureInterface(self):
         self.treatColorScheme(self.overlayColorScheme)
