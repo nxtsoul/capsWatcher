@@ -1,10 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QGraphicsOpacityEffect, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal
 from winreg import OpenKey, SetValueEx, QueryValueEx, DeleteValue, REG_SZ, KEY_ALL_ACCESS, HKEY_CURRENT_USER
 from datetime import datetime
-import capsWatcherResources, sys, os, subprocess, configparser, json, psutil, time, pywinstyles, pathlib, zipfile
+import capsWatcherResources, sys, os, subprocess, configparser, json, psutil, time, pywinstyles, pathlib, zipfile, requests, webbrowser
 
 appVersion = [1, 0, 1, 9]
 
@@ -35,12 +35,16 @@ class capsWatcher_configInterface(QMainWindow):
         self.configureInterface()
 
         self.processWatcherThread = capsWatcher_processWatcher()
-        self.processWatcherThread.processData.connect(self.processWatcher)
+        self.processWatcherThread.processData.connect(self.handleProcessWatcher)
         self.processWatcherThread.start()
 
         self.monitorConfigFile = capsWatcher_monitorConfigFile()
         self.monitorConfigFile.needReload.connect(self.handleFileModified)
         self.monitorConfigFile.start()
+
+        self.updaterThread = capsWatcher_updateChecker(autoCheck=True)
+        self.updaterThread.updaterStatus.connect(self.parseUpdate)
+        if self.settingsCheckForUpdates : self.updaterThread.start()
 
     def parsePaths(self):
         if getattr(sys, 'frozen', False) : self.currentDirectory = os.path.dirname(sys.executable)
@@ -244,6 +248,17 @@ class capsWatcher_configInterface(QMainWindow):
         self.ui.applyButton.setText(self.appLang["APPLY_CHANGES"])
         if self.fileModified : self.ui.infoLabel.setText(self.appLang["PENDING_CHANGES_TO_APPLY"])
 
+    def parseUpdate(self, needUpdate, apiVersion, error, autoCheck):
+        if error and not autoCheck:
+            self.showMessageBox(self.appLang["FAILED_UPDATE"], self.appLang["FAILED_UPDATE_TEXT"], "critical")
+            return
+        if not needUpdate and not autoCheck:
+            self.showMessageBox(self.appLang["NO_UPDATE"], self.appLang["NO_UPDATE_TEXT"], "information")
+            return
+        elif needUpdate:
+            if self.showMessageBox(self.appLang["NEED_UPDATE"], self.appLang["NEED_UPDATE_TEXT"].format(apiVersion), "question") == QMessageBox.Yes:
+                webbrowser.open('https://github.com/nxtsoul/capsWatcher/releases/latest')
+
     def configureInterface(self):
         self.treatColorScheme(self.overlayColorScheme)
 
@@ -259,29 +274,33 @@ class capsWatcher_configInterface(QMainWindow):
         self.ui.fadeEffectBoxSlider.valueChanged.connect(self.handleFadeEffect)
         self.ui.fadeEffectBoxLabel.mouseDoubleClickEvent = self.handleFadeEffect
 
+        self.ui.positionScreenComboBox.currentIndexChanged.connect(self.handleScreenPosition)
+
         self.ui.themeComboBox.activated.connect(self.handleTheme)
         self.ui.themeInfo.clicked.connect(self.handleThemeInfo)
-        self.ui.positionScreenComboBox.currentIndexChanged.connect(self.handleScreenPosition)
+        
         self.ui.colorSchemeComboBox.activated.connect(self.handleColorScheme)
 
         self.ui.numLockCheckBox.stateChanged.connect(self.handleKeyToWatch)
         self.ui.capsLockCheckBox.stateChanged.connect(self.handleKeyToWatch)
         self.ui.scrollLockCheckBox.stateChanged.connect(self.handleKeyToWatch)
 
+        self.ui.watcherStart.clicked.connect(self.handleStartProcess)
+        self.ui.watcherStop.clicked.connect(self.handleStopProcess)
+
         self.ui.settingsBoxAtStartupCheckBox.stateChanged.connect(self.handleRunAtStart)
         self.ui.settingsBoxTrayIconCheckBox.stateChanged.connect(self.handleTrayIcon)
 
-        self.ui.addThemeBoxButton.clicked.connect(self.handleThemeAddition)
-        self.ui.neverUpdateCheckbox.stateChanged.connect(self.handleUpdateCheck)
-
         self.ui.languageBoxComboBox.currentIndexChanged.connect(self.handleLanguage)
+
+        self.ui.addThemeBoxButton.clicked.connect(self.handleThemeAddition)
+
+        self.ui.updateButton.clicked.connect(self.handleUpdate)
+        self.ui.neverUpdateCheckbox.stateChanged.connect(self.handleUpdateCheck)
         
         self.ui.resetButton.clicked.connect(self.handleReset)
 
         self.ui.exitButton.clicked.connect(self.handleQuit)
-
-        self.ui.watcherStart.clicked.connect(self.handleStartProcess)
-        self.ui.watcherStop.clicked.connect(self.handleStopProcess)
         self.ui.applyButton.clicked.connect(self.handleApply)
 
         self.parseKeyToWatch()
@@ -500,7 +519,6 @@ class capsWatcher_configInterface(QMainWindow):
 
     def handleLanguage(self):
         currentData = self.ui.languageBoxComboBox.itemData(self.ui.languageBoxComboBox.currentIndex())
-        print(self.ui.languageBoxComboBox.count())
         if self.settingsLanguage != currentData:
             self.settingsLanguage = currentData
             self.currentLanguageFile = os.path.join(self.languagesPath, f"{currentData}.json")
@@ -508,6 +526,68 @@ class capsWatcher_configInterface(QMainWindow):
             self.parseTranslation()
             self.modifyConfig('settings', 'language', str(currentData))
 
+    def handleUpdateCheck(self, state):
+        if state == 0 : self.modifyConfig('settings', 'checkforupdates', '1')
+        elif state == 2 : self.modifyConfig('settings', 'checkforupdates', '0')
+
+    def handleRunAtStart(self, state=2, getKeyStatus=False):
+        regKey = OpenKey(HKEY_CURRENT_USER, r"Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_ALL_ACCESS)
+        regKeyName = "capsWatcher"
+        config = str(int(False))
+        try:
+            QueryValueEx(regKey, regKeyName)[0]
+            regKeyExists = True
+        except:
+            regKeyExists = False
+        if getKeyStatus : return str(int(regKeyExists))
+        if state == 2:
+            if not regKeyExists:
+                SetValueEx(regKey, regKeyName, 0, REG_SZ, 'C:\\Program Files (x86)\\capsWatcher\\capsWatcher.exe')
+                config = str(int(True))
+        elif state == 0:
+            if regKeyExists:
+                DeleteValue(regKey, regKeyName)
+                config = str(int(False))
+        self.modifyConfig('settings', 'runatstartup', config)
+
+    def handleTrayIcon(self, state):
+        if state == 0 : self.modifyConfig('settings', 'trayicon', '0')
+        elif state == 2 : self.modifyConfig('settings', 'trayicon', '1')
+
+    def handlePreviewIconOpacity(self):
+        self.imageOpacity.setOpacity(self.overlayOpacity/100)
+        self.ui.previewBoxIconLabel.setGraphicsEffect(self.imageOpacity)
+    
+    def handleProcessWatcher(self, state, pid):
+        if state:
+            self.ui.watcherStatus.setStyleSheet(self.ui.greenLabel)
+            self.ui.watcherStatus.setText(self.appLang["RUNNING_PROCESS"].format(pid))
+            self.ui.watcherStart.setDisabled(True)
+            self.ui.watcherStop.setDisabled(False)
+            if self.currentScheme == 0:
+                self.ui.watcherStart.setIcon(self.ui.startIconDisabled)
+                self.ui.watcherStop.setIcon(self.ui.darkStopIcon)
+            elif self.currentScheme == 1:
+                self.ui.watcherStart.setIcon(self.ui.startIconDisabled)
+                self.ui.watcherStop.setIcon(self.ui.lightStopIcon)
+        else:
+            self.ui.watcherStatus.setStyleSheet(self.ui.redLabel)
+            self.ui.watcherStatus.setText(self.appLang["NOT_RUNNING_PROCESS"])
+            self.ui.watcherStart.setDisabled(False)
+            self.ui.watcherStop.setDisabled(True)
+            if self.currentScheme == 0:
+                self.ui.watcherStart.setIcon(self.ui.darkStartIcon)
+                self.ui.watcherStop.setIcon(self.ui.stopIconDisabled)
+            elif self.currentScheme == 1:
+                self.ui.watcherStart.setIcon(self.ui.lightStartIcon)
+                self.ui.watcherStop.setIcon(self.ui.stopIconDisabled)
+
+    def handleUpdate(self):
+        self.updaterThread.terminate()
+        self.updaterThread = capsWatcher_updateChecker(autoCheck=False)
+        self.updaterThread.updaterStatus.connect(self.parseUpdate)
+        self.updaterThread.start()
+    
     def treatKeyWatchBasedOnTheme(self, colorMode, listKeys=False):
         themeData = json.load(open(self.currentThemeFile, encoding='utf-8'))
         darkModeSupport = themeData['darkMode']['isSupported']
@@ -549,62 +629,6 @@ class capsWatcher_configInterface(QMainWindow):
             self.treatKeyWatchBasedOnTheme('lightMode')
             if self.fileModified : self.ui.applyButton.setIcon(self.ui.lightApplyIcon)
             self.parsePreviewImage()
-
-    def handleRunAtStart(self, state=2, getKeyStatus=False):
-        regKey = OpenKey(HKEY_CURRENT_USER, r"Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_ALL_ACCESS)
-        regKeyName = "capsWatcher"
-        config = str(int(False))
-        try:
-            QueryValueEx(regKey, regKeyName)[0]
-            regKeyExists = True
-        except:
-            regKeyExists = False
-        if getKeyStatus : return str(int(regKeyExists))
-        if state == 2:
-            if not regKeyExists:
-                SetValueEx(regKey, regKeyName, 0, REG_SZ, 'C:\\Program Files (x86)\\capsWatcher\\capsWatcher.exe')
-                config = str(int(True))
-        elif state == 0:
-            if regKeyExists:
-                DeleteValue(regKey, regKeyName)
-                config = str(int(False))
-        self.modifyConfig('settings', 'runatstartup', config)
-    
-    def handleTrayIcon(self, state):
-        if state == 0 : self.modifyConfig('settings', 'trayicon', '0')
-        elif state == 2 : self.modifyConfig('settings', 'trayicon', '1')
-
-    def handleUpdateCheck(self, state):
-        if state == 0 : self.modifyConfig('settings', 'checkforupdates', '1')
-        elif state == 2 : self.modifyConfig('settings', 'checkforupdates', '0')
-
-    def handlePreviewIconOpacity(self):
-        self.imageOpacity.setOpacity(self.overlayOpacity/100)
-        self.ui.previewBoxIconLabel.setGraphicsEffect(self.imageOpacity)
-        
-    def processWatcher(self, state, pid):
-        if state:
-            self.ui.watcherStatus.setStyleSheet(self.ui.greenLabel)
-            self.ui.watcherStatus.setText(self.appLang["RUNNING_PROCESS"].format(pid))
-            self.ui.watcherStart.setDisabled(True)
-            self.ui.watcherStop.setDisabled(False)
-            if self.currentScheme == 0:
-                self.ui.watcherStart.setIcon(self.ui.startIconDisabled)
-                self.ui.watcherStop.setIcon(self.ui.darkStopIcon)
-            elif self.currentScheme == 1:
-                self.ui.watcherStart.setIcon(self.ui.startIconDisabled)
-                self.ui.watcherStop.setIcon(self.ui.lightStopIcon)
-        else:
-            self.ui.watcherStatus.setStyleSheet(self.ui.redLabel)
-            self.ui.watcherStatus.setText(self.appLang["NOT_RUNNING_PROCESS"])
-            self.ui.watcherStart.setDisabled(False)
-            self.ui.watcherStop.setDisabled(True)
-            if self.currentScheme == 0:
-                self.ui.watcherStart.setIcon(self.ui.darkStartIcon)
-                self.ui.watcherStop.setIcon(self.ui.stopIconDisabled)
-            elif self.currentScheme == 1:
-                self.ui.watcherStart.setIcon(self.ui.lightStartIcon)
-                self.ui.watcherStop.setIcon(self.ui.stopIconDisabled)
 
     def getSystemScheme(self):
         try: return 0 if QueryValueEx(OpenKey(HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'), 'AppsUseLightTheme')[0] == 0 else 1
@@ -691,6 +715,22 @@ class capsWatcher_monitorConfigFile(QThread):
                 break
             self.msleep(50)
 
+class capsWatcher_updateChecker(QThread):
+    updaterStatus = pyqtSignal(bool, str, bool, bool)
+    # needUpdate:bool, apiVersion:str, error:bool, autoCheck:bool
+    def __init__(self, autoCheck=False):
+        self.autoCheck = autoCheck
+        super().__init__()
+    def run(self):
+        try:
+            responseFromGitHub = requests.get('https://api.github.com/repos/nxtsoul/conversorAFD/releases/latest', headers={'Accept':'application/json'})
+            if responseFromGitHub.status_code == 200:
+                latestVersion = int(str(responseFromGitHub.json()['name']).replace('v', '').replace('.', ''))
+                currentVersion = int("".join(map(str, appVersion)))
+                needUpdate = True if latestVersion > currentVersion else False
+                self.updaterStatus.emit(needUpdate, responseFromGitHub.json()['name'], False, self.autoCheck)
+        except requests.exceptions.RequestException : self.updaterStatus.emit(False, '', True, self.autoCheck)
+ 
 class capsWatcher_uiElements(object):
     def setupUi(self, capsWatcher):
         capsWatcher.setObjectName("capsWatcher")
