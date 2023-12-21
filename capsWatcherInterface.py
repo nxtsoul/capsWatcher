@@ -124,6 +124,7 @@ class capsWatcher_configInterface(QMainWindow):
         if self.settingsRunAtStartup: self.ui.settingsBoxAtStartupCheckBox.setChecked(True)
         if self.settingsTrayIcon : self.ui.settingsBoxTrayIconCheckBox.setChecked(True)
         if not self.settingsCheckForUpdates : self.ui.neverUpdateCheckbox.setChecked(True)
+        else : self.ui.neverUpdateCheckbox.setChecked(False)
 
     def parseThemes(self):
         self.ui.themeComboBox.clear()
