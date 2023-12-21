@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QGraphicsOpacityEffect, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from winreg import OpenKey, SetValueEx, QueryValueEx, DeleteValue, REG_SZ, KEY_ALL_ACCESS, HKEY_CURRENT_USER
 from datetime import datetime
 import capsWatcherResources, sys, os, subprocess, configparser, json, psutil, time, pywinstyles, pathlib, zipfile, requests, webbrowser
