@@ -24,14 +24,14 @@ class capsWatcher_configInterface(QMainWindow):
         self.darkModeSupport = None
         self.lightModeSupport = None
         self.fileModified = None
-        self.inResetState = False
         self.numLockSupport = ['Num Lock', None]
         self.capsLockSupport = ['Caps Lock', None]
         self.scrollLockSupport = ['Scroll Lock', None]
 
         self.parsePaths()
-        self.parseConfig()
+        self.parseLanguages()
         self.parseThemes()
+        self.parseConfig()
         self.configureInterface()
 
         self.processWatcherThread = capsWatcher_processWatcher()
@@ -107,9 +107,7 @@ class capsWatcher_configInterface(QMainWindow):
         if any(item not in [20,144,145] for item in self.overlayKeysToWatch) : self.appException("Unable to load configuration file.", f"Invalid key {[x for x in self.overlayKeysToWatch]} to define to capsWatcher, supported keys is (20, 144, 145)", configRelated=True)
         if not self.settingsLanguage or not self.currentLanguageExists : self.appException("Unable to load configuration file.", f"The language file '{self.settingsLanguage}.json' is not found or is corrupted.", configRelated=True)
 
-        if not self.inResetState:
-            self.parseLanguages()
-            self.parseTranslation()
+        self.parseTranslation()
 
         self.ui.displayTimeBoxSlider.setValue(self.overlayDisplayTime)
         self.ui.displayTimeBoxLabel.setText(f"{self.overlayDisplayTime}ms")
@@ -197,8 +195,7 @@ class capsWatcher_configInterface(QMainWindow):
         self.ui.previewBoxIconLabel.setPixmap(overlayPreviewPixmap)
 
     def parseTranslation(self):
-        languageComboBoxItem = self.ui.languageBoxComboBox.findData(self.settingsLanguage)
-        self.ui.languageBoxComboBox.setCurrentIndex(languageComboBoxItem)
+        self.ui.languageBoxComboBox.setCurrentIndex(self.ui.languageBoxComboBox.findData(self.settingsLanguage))
         with open(self.currentLanguageFile, "r", encoding="utf-8") as languageFile:
             self.appLang = json.load(languageFile)
             languageFile.close()
@@ -463,15 +460,13 @@ class capsWatcher_configInterface(QMainWindow):
         if self.showMessageBox(self.appLang["RESET_SETTINGS"], self.appLang["RESET_TEXT"]+"<br />"+self.appLang["RESET_WARNING"], "question") != QMessageBox.Yes: return
         self.monitorConfigFile.terminate()
         os.unlink(self.configFilePath)
-        self.inResetState = True
         self.parseConfig()
         self.treatColorScheme(self.overlayColorScheme)
         self.parseKeyToWatch()
         self.handlePreviewIconOpacity()
         open(os.path.join(self.configPath, 'reload.d'), 'w').close()
         self.monitorConfigFile.start()
-        self.inResetState = False
-    
+        
     def handleApply(self, event=None):
         self.handleFileModified(modified=False)
 
