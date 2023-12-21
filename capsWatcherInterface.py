@@ -718,8 +718,9 @@ class capsWatcher_updateChecker(QThread):
         super().__init__()
     def run(self):
         try:
-            responseFromGitHub = requests.get('https://api.github.com/repos/nxtsoul/conversorAFD/releases/latest', headers={'Accept':'application/json'})
-            if responseFromGitHub.status_code == 200:
+            responseFromGitHub = requests.get('https://api.github.com/repos/nxtsoul/capsWatcher/releases/latest', headers={'Accept':'application/json'})
+            if responseFromGitHub.status_code == 404 : self.updaterStatus.emit(False, '', True, self.autoCheck)
+            elif responseFromGitHub.status_code == 200:
                 latestVersion = int(str(responseFromGitHub.json()['name']).replace('v', '').replace('.', ''))
                 currentVersion = int("".join(map(str, appVersion)))
                 needUpdate = True if latestVersion > currentVersion else False
@@ -1460,7 +1461,7 @@ QComboBox QAbstractItemView {
         self.capsWatcher_logo.setText("<html><head/><body><p align=\"center\"><img src=\":/capsWatcher/capsWatcher_dark.png\"/></p></body></html>")
         capsWatcher.setStyleSheet("QMainWindow {\n"
 "    background-color:rgb(40, 40, 40);\n"
-"}")
+"}"+self.darkComboBox)
         self.previewBoxBackgroundLabel.setStyleSheet("background:url(:/capsWatcher/previewDarkMode.png);border-radius:4px")
         self.mainTab.setStyleSheet("QTabWidget::tab-bar {\n"
 "   border: 1px solid white;\n"
