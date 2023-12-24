@@ -77,20 +77,13 @@ class capsWatcher_customQMenu(QMenu):
         path.addRoundedRect(rect, self.radius, self.radius)
         region = QRegion(path.toFillPolygon(QTransform()).toPolygon())
         self.setMask(region)
+
 class capsWatcher_Overlay(QWidget):
     def __init__(self):
         super().__init__()
 
         self.checkForExistingProcess()
-
-        self.cfgPath = pathj(os.getenv('APPDATA'), 'capsWatcher')
-        self.cfgFilePath = pathj(self.cfgPath, 'capsWatcher.cfg')
-        self.themesPath = pathj(self.cfgPath, 'themes')
-        self.reloadFile = pathj(self.cfgPath, 'reload.d')
-        self.terminateFile = pathj(self.cfgPath, 'terminate.d')
-        self.currentDirectory = None
-
-        self.parseCurrentDirectory()
+        self.parsePaths()
         self.parseConfig()
         self.parseTray()
         self.parseElements()
@@ -250,9 +243,15 @@ class capsWatcher_Overlay(QWidget):
         self.quitAction.triggered.connect(self.overlayQuit)
         self.configAction.triggered.connect(self.handleConfigTrayClick)
 
-    def parseCurrentDirectory(self):
+    def parsePaths(self):
         if getattr(sys, 'frozen', False) : self.currentDirectory = os.path.dirname(sys.executable)
         else : self.currentDirectory = os.path.dirname(os.path.abspath(__file__))
+        self.cfgPath = pathj(os.getenv('APPDATA'), 'capsWatcher')
+        self.cfgFilePath = pathj(self.cfgPath, 'capsWatcher.cfg')
+        self.themesPath = pathj(self.currentDirectory, 'themes')
+        self.reloadFile = pathj(self.currentDirectory, 'reload.d')
+        self.terminateFile = pathj(self.currentDirectory, 'terminate.d')
+        self.currentDirectory = None
 
     def handleConfigTrayClick(self):
         subprocess.Popen(os.path.join(self.currentDirectory, 'capsWatcherInterface.exe'), shell=True)
@@ -349,6 +348,7 @@ class capsWatcher_Overlay(QWidget):
         self.showMessageBox("capsWatcher", error+'\n'+'ㅤ'*30+'\n'+message, 'critical')
         if configRelated == True : os.unlink(self.cfgFilePath)
         sys.exit(1)
+
 class capsWatcher_KeyState(QThread):
     stateChanged = pyqtSignal(int, bool)
 

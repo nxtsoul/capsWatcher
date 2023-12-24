@@ -454,7 +454,7 @@ class capsWatcher_configInterface(QMainWindow):
         self.processWatcherThread.terminate()
         self.ui.watcherStatus.setStyleSheet(self.ui.yellowLabel)
         self.ui.watcherStatus.setText(self.appLang["STOPPING_CAPSWATCHER"])
-        open(os.path.join(self.configPath, 'terminate.d'), 'w').close()
+        open(os.path.join(self.currentDirectory, 'terminate.d'), 'w').close()
         self.processWatcherThread.start()
 
     def handleReset(self, event=None):
@@ -495,7 +495,7 @@ class capsWatcher_configInterface(QMainWindow):
             self.fileModified = False
             self.ui.applyButton.setEnabled(False)
             self.ui.applyButton.setIcon(self.ui.applyIconDisabled)
-            open(os.path.join(self.configPath, 'reload.d'), 'w').close()
+            open(os.path.join(self.currentDirectory, 'reload.d'), 'w').close()
             self.ui.infoLabel.setText("")
             self.monitorConfigFile.start()
 
