@@ -540,7 +540,7 @@ class capsWatcher_configInterface(QMainWindow):
         if getKeyStatus : return str(int(regKeyExists))
         if state == 2:
             if not regKeyExists:
-                SetValueEx(regKey, regKeyName, 0, REG_SZ, 'C:\\Program Files (x86)\\capsWatcher\\capsWatcher.exe')
+                SetValueEx(regKey, regKeyName, 0, REG_SZ, os.path.join(self.currentDirectory, 'capsWatcher.exe'))
                 config = str(int(True))
         elif state == 0:
             if regKeyExists:
