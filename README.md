@@ -1,39 +1,39 @@
 
 # capsWatcher
-capsWatcher é um software criado em Python usando o framework PyQt para indicar o estado de teclas de alternância na tela utilizando overlays baseados em imagem, permitindo customização e criação de temas pela comunidade com facilidade. O projeto foi criado baseado na necessidade de algo *opensource* que seja elegante e personalizável, algo para que o usuário possa criar o próprio estilo de overlay. 
+capsWatcher is a software created in Python using the PyQt framework to indicate the state of toggle keys on the screen using image-based overlays, allowing for easy customization and theme creation by the community. The project was developed based on the need for an open-source, elegant, and customizable tool that allows users to create their own overlay style.
 
-# O serviço capsWatcher
-O serviço capsWatcher **`capsWatcher.py`** foi criado usando a API pywin32 para comunicar entre módulos e funções do Windows com o Python para obter o estado das teclas em tempo real, e claramente PyQt para exibir o overlay em tela que se sobrepõe sobre todas as janelas utilizando flags StayOnTop do Windows, deixando claro que exceto para executáveis que utilizam comunicação direta com a placa gráfica para renderizações, como jogos ou quaisquer aplicações utilizando DirectX ou OpenGL, elas sobrepõem e ignoram a flag StayOnTop do Windows.
+# The capsWatcher service
+The capsWatcher service, **`capsWatcher.py`**, was created using the pywin32 API to communicate between Windows modules and functions with Python to obtain the real-time state of keys. It utilizes PyQt to display the overlay on the screen that overlays on top of all windows using Windows' StayOnTop flags. It is important to note that applications using direct communication with the graphics card for rendering, such as games or applications using DirectX or OpenGL, may overlap and ignore the Windows StayOnTop flag.
 
-O overlay é exibido em tela independente de qual tela seja pois o capsWatcher exibe o overlay baseado na tela onde está o cursor do mouse, então, caso tenha mais de um monitor, o overlay será exibido no monitor onde o cursor do mouse estiver presente, permitindo assim uma flexibilidade para usuários com 2 ou mais monitores.
+The overlay is displayed on any screen as capsWatcher showcases the overlay based on the screen where the mouse cursor is located. Therefore, if there are multiple monitors, the overlay will be shown on the monitor where the mouse cursor is present, providing flexibility for users with two or more monitors.
 
 
 <p align="center"><img src="https://i.imgur.com/oEFmote.gif"></p>
 
-Comunicando com os dados do arquivo de configuração o capsWatcher é capaz de monitorar mais de uma tecla de alternância sem criar diversos processos filhos a partir do primário e claramente utilizando pouquíssima CPU e RAM após carregar as variáveis e informações, basicamente o peso de uma pena para seus recursos.
+By communicating with data from the configuration file, capsWatcher can monitor more than one toggle key without creating multiple child processes from the primary one. After loading variables and information, it utilizes minimal CPU and RAM, basically weighing as little as a feather on your resources.
 
-Mantendo um ícone na área de notificações do Windows (na qual o usuário decide se ele é oculto ou não) é possível chamar a interface de configuração e configurar o overlay, encerrar ou recarregar as configurações do arquivo.
+Maintaining an icon in the Windows notification area (where the user decides whether it's hidden or not) allows users to access the configuration interface, configure the overlay, terminate, or reload file configurations.
 
-# A interface de configuração capsWatcher
-A interface de configuração do capsWatcher **`capsWatcherInterface.py`** foi desenvolvida em conjunto com o serviço capsWatcher, que permite a configuração do overlay nas quais são; 
-- Tempo de exibição do overlay na tela em ms(milisegundos)
-- Tempo do efeito de fade-in/out em ms(milisegundos)
-- Opacidade do overlay na tela
-- Posição do overlay na tela
-- Seleção de temas
-- Seleção do esquema de cores (baseado no tema atual)
-- Área de pré-visualização de como o overlay ficará na tela com as configurações atuais.
-- Seleção de teclas que deseja monitorar
-- Controle para iniciar ou parar o serviço capsWatcher.
+# The capsWatcher configuration interface
+The capsWatcher configuration interface, **`capsWatcherInterface.py`**, was developed in conjunction with the capsWatcher service. It enables configuration of the overlay settings such as:
+- Overlay display time on the screen in milliseconds (ms)
+- Fade-in/out effect time in milliseconds (ms)
+- Overlay opacity on the screen
+- Overlay position on the screen
+- Theme selection
+- Color scheme selection (based on the current theme)
+- Preview area of how the overlay will appear on the screen with the current settings
+- Selection of keys to monitor
+- Control to start or stop the capsWatcher service.
 
- e também outras configurações da interface relacionado ao serviço como;
+It also includes other interface-related settings for the service such as:
 
-- Iniciar com o Windows
-- Mostrar ou ocultar o ícone na área de tarefas
-- Seleção de linguagem da interface de configurações
-- Área para instalar novos temas (que podem ser feitos por você)
-- Área para checar atualizações que também incluem seleção para nunca checar por atualizações
-- Função para redefinir todas as configurações do capsWatcher para as padrões.
+- Start with Windows
+- Show or hide the icon in the taskbar area
+- Interface language selection
+- Area to install new themes (which can be created by you)
+- Area to check for updates, including an option to never check for updates
+- Function to reset all capsWatcher settings to defaults.
 
 <br />
 <p align="center">
@@ -41,75 +41,69 @@ A interface de configuração do capsWatcher **`capsWatcherInterface.py`** foi d
     <img width="487" src="https://i.imgur.com/OUPH7Ss.png">
 </p>
 
-# Temas
-A parte de temas do capsWatcher nasceu com a ideia de que sejam criados pela comunidade e caso queiram, serão integrados a esse repositório por meio de pull requests na pasta `contributed-themes` contanto que sigam as recomendações de como criar um tema abaixo e podendo até aparecer em uma próxima release do capsWatcher.
+# Themes
+The theme section of capsWatcher was conceived with the idea that themes would be created by the community and, if desired, integrated into this repository through pull requests in the `contributed-themes` folder, as long as they follow the recommendations on how to create a theme below. These themes might even appear in an upcoming release of capsWatcher.
 
-## Do que é constituído o tema ?
-O tema é constituído em formato de arquivo ZIP com sua estrutura de diretórios (na qual iremos abordar logo abaixo), arquivos de imagem de overlay e o JSON com o nome do tema contendo informações sobre o tema para que de forma padronizada a interface de configuração do capsWatcher a consiga importar de maneira fácil e rápida. Ok, isso é interessante, mas como consigo criar o meu ?
+## What constitutes a theme?
+A theme is structured as a ZIP file containing directories (which we will address shortly), overlay image files, and a JSON file with the theme's name containing standardized information. This allows the capsWatcher configuration interface to import it easily and quickly. How can I create my own?
 
-## O arquivo de imagem
-Os temas do capsWatcher podem ser feitos utlizando imagem em formato PNG Alpha, que suporte transparências, na qual recomendam-se ser nas dimensões de 128 pixels de altura e 128 pixels de largura, exatamente na proporção 1:1, (caso exceda, o preview na interface de configuração irá mostrar apenas os 128 pixels iniciais tanto x como y, o que será algo a corrigir em uma versão futura), porém podendo exceder tal tamanho pois o overlay o posiciona na tela calculando a dimensões da imagem, dimensão da tela e definindo a posição conforme selecionada pelo usuário. 
+## The image file
+capsWatcher themes can be created using PNG Alpha images that support transparency, recommended to be in dimensions of 128 pixels in height and 128 pixels in width, maintaining a 1:1 aspect ratio. (If it exceeds this size, the preview in the configuration interface will show only the initial 128 pixels for both x and y, which will be addressed in a future version.) However, it can exceed this size as the overlay positions it on the screen by calculating the image dimensions, screen size, and defining the position as selected by the user.
 
-*OBS: Atualmente o capsWatcher suporta apenas o monitoramento de teclas de alternância como Num Lock, Caps Lock e Scroll Lock.*
+*Note: Currently, capsWatcher only supports monitoring toggle keys like Num Lock, Caps Lock, and Scroll Lock.*
 
-## Regra de nomenclatura do arquivo de imagem
-Além de ter a imagem preparada, precisamos renomeá-la para que o capsWatcher a encontre e a defina como a tecla associada, para isso utlizamos o [código da tecla](https://learn.microsoft.com/pt-br/dotnet/api/system.windows.forms.keys?view=windowsdesktop-8.0) e o estado em booleano como analogia descrita abaixo;
+## Naming convention for the image file
+In addition to preparing the image, we need to rename it so that capsWatcher can find and define it as the associated key. For this purpose, we use the [key code](https://learn.microsoft.com/en-US/dotnet/api/system.windows.forms.keys?view=windowsdesktop-8.0) and the Boolean state as described below:
 
-**`código da tecla + estado da tecla.png`**
+**`key code + key state.png`**
 
-Utilizando a analogia descrita acima, digamos que iremos fazer uma imagem customizada para a tecla Caps Lock no estado de desativada, então;
+Using the analogy described above, let's say we are creating a custom image for the Caps Lock key in the deactivated state. The key code for Caps Lock is **20**, and the Boolean state for the deactivated key is **0**. The textual sum of these items results in a file named **`200.png`**, representing the deactivated state of the Caps Lock key.
 
-Código da tecla Caps Lock é **20** e o estado da tecla desativada em formato booleano é **0**
+## Directory structure of a theme
 
-A soma textual dos itens resulta em um arquivo com o seguinte nome, **`200.png`**, esse é o nosso arquivo referente ao estado desativado da tecla Caps Lock.
+To ensure smooth operation with capsWatcher themes, we need to follow specific directory structure rules. Inside the `themes` folder of capsWatcher is where themes are stored, each in its own folder with the theme's name. Inside each theme's subfolder, there should be the theme's `*.json`file and subfolders for color schemes, such as `dark` or `light`. These can be defined with other names and updated in the `*.json` file, which we'll cover shortly.
 
-## Estrutura do diretório de um tema
+Inside each color scheme folder, the images corresponding to the keys supported in the current theme should be located, following the naming convention mentioned earlier.
 
-Para que tudo ocorra bem com os temas do capsWatcher, precisamos seguir algumas regras de estrutura de diretórios. 
-
-Dentro da pasta `themes` do capsWatcher, é o local onde os temas são armazenados, cada um em sua pasta contendo o nome do tema na pasta em questão, dentro de cada subpasta do tema, há de ter o arquivo `*.json` do tema em questão, e as subpastas referentes aos esquemas de cores, entre eles `dark` ou `light` que podem ser definidos com outros nomes e atualizados no arquivo `*.json` que vamos abordar futuramente. 
-
-Dentro de cada pasta de esquema de cores, deverão estar localizadas as imagens referentes as teclas que haverão suporte no tema atual seguindo a regra de nomenclatura citada anteriormente.
-
-Abaixo segue o exemplo de estrutura de diretório a partir da pasta `themes` do próprio capsWatcher referente ao tema padrão "Elegant";
+Below is an example directory structure starting from the `themes` folder within capsWatcher for the default "Elegant" theme:
 
 ```bash
 ├── themes
-│   ├── elegant # Pasta do tema
-│   │   ├── dark # Pasta onde estão localizados as imagens referente ao modo escuro do tema
-│   │   │   ├── 200.png # Imagem referente a tecla Caps Lock em seu estado desativado no modo escuro
-│   │   │   ├── 201.png # Imagem referente a tecla Caps Lock em seu estado ativado no modo escuro
-│   │   │   ├── 1440.png # Imagem referente a tecla Num Lock em seu estado desativado no modo escuro
-│   │   │   ├── 1441.png # Imagem referente a tecla Num Lock em seu estado ativado no modo escuro
-│   │   │   ├── 1450.png # Imagem referente a tecla Scroll Lock em seu estado desativado no modo escuro
-│   │   │   ├── 1451.png # Imagem referente a tecla Scroll Lock em seu estado ativado no modo escuro
-│   │   ├── light # Pasta onde estão localizados as imagens referente ao modo claro do tema
-│   │   │   ├── 200.png # Imagem referente a tecla Caps Lock em seu estado desativado no modo claro
-│   │   │   ├── 201.png # Imagem referente a tecla Caps Lock em seu estado ativado no modo claro
-│   │   │   ├── 1440.png # Imagem referente a tecla Num Lock em seu estado desativado no modo claro
-│   │   │   ├── 1441.png # Imagem referente a tecla Num Lock em seu estado ativado no modo claro
-│   │   │   ├── 1450.png # Imagem referente a tecla Scroll Lock em seu estado desativado no modo claro
-│   │   │   ├── 1451.png # Imagem referente a tecla Scroll Lock em seu estado ativado no modo claro
-│   └── elegant.json # Arquivo JSON para identificação e suporte do tema ao capsWatcher
+│   ├── elegant # Theme folder
+│   │   ├── dark # Folder containing images for the dark mode of the theme
+│   │   │   ├── 200.png # Image for the Caps Lock key in its deactivated state in dark mode
+│   │   │   ├── 201.png # Image for the Caps Lock key in its activated state in dark mode
+│   │   │   ├── 1440.png # Image for the Num Lock key in its deactivated state in dark mode
+│   │   │   ├── 1441.png # Image for the Num Lock key in its activated state in dark mode
+│   │   │   ├── 1450.png # Image for the Scroll Lock key in its deactivated state in dark mode
+│   │   │   ├── 1451.png # Image for the Scroll Lock key in its activated state in dark mode
+│   │   ├── light # Folder containing images for the light mode of the theme
+│   │   │   ├── 200.png # Image for the Caps Lock key in its deactivated state in light mode
+│   │   │   ├── 201.png # Image for the Caps Lock key in its activated state in light mode
+│   │   │   ├── 1440.png # Image for the Num Lock key in its deactivated state in light mode
+│   │   │   ├── 1441.png # Image for the Num Lock key in its activated state in light mode
+│   │   │   ├── 1450.png # Image for the Scroll Lock key in its deactivated state in light mode
+│   │   │   ├── 1451.png # Image for the Scroll Lock key in its activated state in light mode
+│   └── elegant.json # JSON file for theme identification and support in capsWatcher
 └────────────────────────
 ```
 
-Desse modo, temos pronta a estrutura de diretórios de um tema para o capsWatcher.
+This structure represents a complete theme directory for capsWatcher.
 
-## Modo claro e modo escuro aplicado aos temas
+## Light and dark modes applied to themes
 
-Porém como posso decidir que meu tema tenha uma aparência diferente caso o esquema de cores do Windows esteja no modo claro ou escuro ?
+How can I decide that my theme has a different appearance based on whether the Windows color scheme is light or dark?
 
-Basicamente para constituir os modos de cores do tema, além de ter sua imagem em formato PNG com as dimensões recomendadas, precisamos decidir se esse tema suportará para monitorar o Num Lock apenas em modo claro, ou Caps Lock apenas no modo escuro ou até mesmo Scroll Lock em ambos modos de cores.
+To build the color modes of the theme, in addition to having the image in PNG format with the recommended dimensions, we need to decide if this theme will support monitoring the Num Lock only in light mode, Caps Lock only in dark mode, or even Scroll Lock in both color modes.
 
-Sabendo disso, para cada esquema de cor claro ou escuro, precisamos na pasta do tema (como estrutura de diretórios explicados acima) criar uma subpasta para cada esquema de cor (recomenda-se criar com os nomes padrão "dark" para modo escuro, e "light" para o modo claro), cada subpasta contendo suas imagens de overlay para atuar em ambos esquemas de cores, caso deseje, e lembre-se do nome dessas subpastas, iremos utilizá-la para criar o nosso arquivo JSON do tema.
+Knowing this, for each light or dark color scheme, within the theme's folder (as explained in the directory structure above), create a subfolder for each color scheme (it's recommended to name them "dark" for dark mode and "light" for light mode). Each subfolder should contain its overlay images to work in both color schemes if desired. Remember the name of these subfolders, as we will use them to create our theme's JSON file.
 
-Ok, montada as pastas de esquemas de cores e sua devida estrutura de diretórios, precisamos montar o arquivo JSON para que o capsWatcher reconheça o tema, sem ele, o capsWatcher não irá carregar o tema, então vamos para a parte do JSON.
+After setting up the color scheme folders and their directory structure, create the JSON file so that capsWatcher recognizes the theme. Without it, capsWatcher won't load the theme. Let's move on to the JSON part.
 
-## O arquivo JSON do tema
-Cada tema obrigatoriamente tem seu arquivo JSON que deve ficar localizado na pasta raíz do tema (como explicado anteriormente na estrutura de diretórios de um tema), que contém informações para que o capsWatcher o identifique se suporta multiplos esquemas de cores, se o tema suporta o monitoramento de uma tecla específica dependendo do esquema de cor, além de informações gerais como, nome do tema e detalhes do criador.
+## The theme's JSON file
+Each theme must have a JSON file located in the root theme folder (as explained earlier in the theme's directory structure). This file contains information for capsWatcher to identify if it supports multiple color schemes, whether the theme supports monitoring a specific key depending on the color scheme, and general information such as the theme's name and creator details.
 
-O arquivo JSON de um tema é simples e com poucas chaves e valores, e lembre-se, é necessário que ele esteja na raíz da pasta do tema, abaixo segue o exemplo de um json do tema padrão "Elegant" do capsWatcher.
+The JSON file for a theme is simple with few keys and values. Remember, it must be in the root of the theme folder. Below is an example of a JSON file for the "Elegant" theme in capsWatcher:
 
 ```json
 {
@@ -136,8 +130,8 @@ O arquivo JSON de um tema é simples e com poucas chaves e valores, e lembre-se,
 }
 ```
 
-Visualizando o JSON do tema "Elegant", podemos perceber que o suporte das teclas se divide entre esquema de cores, sendo eles, `darkMode` e `lightMode`, e em cada um deles o suporte para cada tecla de alternância.
+Looking at the "Elegant" theme's JSON, we see that key support is divided between color schemes, namely `darkMode` and `lightMode`, with each supporting specific toggle keys.
 
-É importante também ressaltar que caso a chave `isSupported` da chave pai `darkMode` seja alterada para `false`, o capsWatcher entenderá que aquele tema não suporta o monitoramento no modo escuro de cor, independentemente se as chaves de suporte das teclas como `numLockSupport` estejam com o valor `true`. Então caso seu tema tenha suporte apenas para a tecla Num Lock, deixe a chave `isSupported` da chave pai `darkMode` com o valor `true`, e o valor da chave `numLockSupport` com o valor `true`, e assim por diante caso deseja suporte em outras teclas.
+It's also important to note that if the `isSupported` key of the parent `darkMode` is changed to `false`, capsWatcher will understand that the theme doesn't support dark mode, regardless of whether the key support keys like `numLockSupport` are set to `true`. Therefore, if your theme only supports the Num Lock key, leave the `isSupported` key of the parent `darkMode` as `true`, and the `numLockSupport` key's value as `true`, and so on for other key supports.
 
-Finalizado essa etapa, já é possível zipar o tema e compartilhar via pull request para que esteja em próximas releases do capsWatcher.
+Once this step is completed, you can zip the theme and share it via a pull request to be included in future capsWatcher releases.
