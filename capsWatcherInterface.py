@@ -34,6 +34,8 @@ class capsWatcher_configInterface(QMainWindow):
         self.parseConfig()
         self.configureInterface()
 
+        if "/startservice" in sys.argv : self.handleStartProcess(argvCall=True)
+
         self.processWatcherThread = capsWatcher_processWatcher()
         self.processWatcherThread.processData.connect(self.handleProcessWatcher)
         self.processWatcherThread.start()
@@ -439,14 +441,14 @@ class capsWatcher_configInterface(QMainWindow):
             self.overlayFadeEffectTime = currentValue
             self.modifyConfig('overlay', 'fadeEffectTime', str(currentValue))
 
-    def handleStartProcess(self, event=None):
-        self.processWatcherThread.terminate()
+    def handleStartProcess(self, event=None, argvCall=False):
+        if not argvCall : self.processWatcherThread.terminate()
         self.ui.watcherStart.setDisabled(True)
         self.ui.watcherStart.setIcon(self.ui.startIconDisabled)
         self.ui.watcherStatus.setStyleSheet(self.ui.yellowLabel)
         self.ui.watcherStatus.setText(self.appLang["STARTING_CAPSWATCHER"])
         subprocess.Popen(os.path.join(self.currentDirectory, 'capsWatcher.exe'), shell=True)
-        self.processWatcherThread.start()
+        if not argvCall : self.processWatcherThread.start()
     
     def handleStopProcess(self, event=None):
         self.ui.watcherStop.setDisabled(True)
@@ -675,7 +677,7 @@ class capsWatcher_processWatcher(QThread):
     def run(self):
         foundProcess = False
         processInfo = ['capsWatcher.exe', None]
-        time.sleep(1)
+        time.sleep(1.5)
         while not foundProcess:
             time.sleep(1)
             for process in psutil.process_iter(['name']):
