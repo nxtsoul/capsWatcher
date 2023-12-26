@@ -465,7 +465,7 @@ class capsWatcher_configInterface(QMainWindow):
         self.treatColorScheme(self.overlayColorScheme)
         self.parseKeyToWatch()
         self.handlePreviewIconOpacity()
-        open(os.path.join(self.configPath, 'reload.d'), 'w').close()
+        open(os.path.join(self.currentDirectory, 'reload.d'), 'w').close()
         self.monitorConfigFile.start()
         
     def handleApply(self, event=None):
